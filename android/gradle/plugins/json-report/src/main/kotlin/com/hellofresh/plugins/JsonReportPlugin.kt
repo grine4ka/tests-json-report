@@ -11,15 +11,16 @@ import org.gradle.kotlin.dsl.register
 
 class JsonReportPlugin : Plugin<Project> {
 
-    override fun apply(project: Project) {
-        val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
+    override fun apply(project: Project): Unit = project.run {
+        val extension = JsonReportExtension.create(this)
+        val androidComponents = extensions.getByType(AndroidComponentsExtension::class.java)
         androidComponents.onVariants { variant ->
-            project.registerReportTask(variant.name)
+            registerReportTask(variant.name, extension)
         }
     }
 
-    private fun Project.registerReportTask(variantName: String) {
-        val jsonReportTask = tasks.register<JsonReportTask>("test${variantName.capitalized()}JsonReport", variantName)
+    private fun Project.registerReportTask(variantName: String, extension: JsonReportExtension) {
+        val jsonReportTask = tasks.register<JsonReportTask>("test${variantName.capitalized()}JsonReport", variantName, extension)
         tasks.withType(AndroidUnitTest::class.java)
             .matching { it.name == "$UNIT_TEST_PREFIX${variantName.capitalized()}$UNIT_TEST_SUFFIX" }
             .whenTaskAdded {
