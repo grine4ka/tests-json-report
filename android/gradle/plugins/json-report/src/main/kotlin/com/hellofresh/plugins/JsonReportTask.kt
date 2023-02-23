@@ -20,6 +20,9 @@ private const val XML_FILE_EXTENSION = "xml"
 
 private const val JSON_REPORT_FILE_NAME = "json-report.json"
 
+/**
+ * The task generates a JSON report file based on the JUnit XML report produced by the corresponding Android unit test task.
+ */
 abstract class JsonReportTask @Inject constructor(
     private val variant: String,
     private val jsonReportExtension: JsonReportExtension
@@ -53,17 +56,21 @@ abstract class JsonReportTask @Inject constructor(
         testSuitesJsonObject.put(JSON_TESTSUITES_FIELD_NAME, testSuitesArray)
         val jsonString = testSuitesJsonObject.toString(PRETTY_INDENTATION)
         if (jsonReportExtension.fileOutput.enabled) {
-            val output = project.layout.buildDirectory
-                .dir("reports/tests/test${variant.capitalized()}UnitTest")
-                .get().asFile
-
-            if (!output.exists()) {
-                output.mkdirs()
-            }
-            output.resolve(JSON_REPORT_FILE_NAME).writeText(jsonString)
+            writeToFile(jsonString)
         }
         if (jsonReportExtension.systemOutput.enabled) {
             println(jsonString)
         }
+    }
+
+    private fun writeToFile(jsonString: String) {
+        val output = project.layout.buildDirectory
+            .dir("reports/tests/test${variant.capitalized()}UnitTest")
+            .get().asFile
+
+        if (!output.exists()) {
+            output.mkdirs()
+        }
+        output.resolve(JSON_REPORT_FILE_NAME).writeText(jsonString)
     }
 }
