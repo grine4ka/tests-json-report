@@ -19,14 +19,16 @@ class JsonReportPlugin : Plugin<Project> {
     }
 
     private fun Project.registerReportTask(variantName: String) {
-        tasks.register<JsonReportTask>("test${variantName.capitalized()}JsonReport", variantName).configure {
-            val unitTests = project.tasks
-                .withType(AndroidUnitTest::class.java)
-                .named("$UNIT_TEST_PREFIX${variantName.capitalized()}$UNIT_TEST_SUFFIX")
-            val reportsDir = unitTests.flatMap { it.reports.junitXml.outputLocation }
-            testReportsDirectory.set(reportsDir)
-
-            // TODO configure dependency between the tasks
-        }
+        val jsonReportTask = tasks.register<JsonReportTask>("test${variantName.capitalized()}JsonReport", variantName)
+        tasks.withType(AndroidUnitTest::class.java)
+            .matching { it.name == "$UNIT_TEST_PREFIX${variantName.capitalized()}$UNIT_TEST_SUFFIX" }
+            .whenTaskAdded {
+                val unitTests = this
+                jsonReportTask.configure {
+                    val reportsDir = unitTests.reports.junitXml.outputLocation
+                    testReportsDirectory.set(reportsDir)
+                }
+                finalizedBy(jsonReportTask)
+            }
     }
 }
