@@ -1,39 +1,75 @@
-# HelloFresh Mobile DevOps Test
+# Android Unit Tests JSON Report
 
-Hello!
+My motivation was to demonstrate my skills in developing Gradle Plugins.
 
-Thank you for taking the time to try our mobile devOps test. The goal of this test is to assess your coding and automation skills. You're given a simple task, so you can focus on showcasing your techniques.
+But **the main task** was to create _a tool that can create json reports for the tests_.
 
-Note: While we love open source here at HelloFresh, please do not create a public repo with your test in! This challenge is only shared with people interviewing, and for obvious reasons, we'd like it to remain this way.
+## Possible solutions
 
-## Problem definition
+The task can be done in several ways that I thought about. Here are some of them:
+- Standalone CLI tool
+  - Python variant
+  - Kotlin variant using [Clikt](https://ajalt.github.io/clikt/)
+- Custom Android Test Runner
+  - Like [AllureAndroidJUnit4](https://github.com/allure-framework/allure-kotlin/blob/master/allure-kotlin-android/src/main/kotlin/io/qameta/allure/android/runners/AllureAndroidJUnitRunners.kt)
+- Using Gradle
+  - Gradle task
+  - Gradle Plugin with task
+  - Using AbstractTestTask methods: [addTestListener](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.AbstractTestTask.html#org.gradle.api.tasks.testing.AbstractTestTask:addTestListener(org.gradle.api.tasks.testing.TestListener)) or [afterSuite](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.AbstractTestTask.html#org.gradle.api.tasks.testing.AbstractTestTask:afterSuite(groovy.lang.Closure)) closure. (This method I found too late)
 
-Under this repository, you will find one Android codebase and one iOS codebase. Each codebase contains a sample app along with a small suite of unit tests.
+I stopped on implementing Gradle Plugin with task by reasons:
 
-The aim of the test is to automate the process of building and running the included test suite in **one of the applications** and gather the results into a JSON format that can be printed to an output file or to a standard output.
+- Gradle plugin is a good place to hide implementation details.
+- Gradle plugin allows to create extension where user can configure some details.
+- Gradle plugin can be modified easily, for example if we need to add some new functionality to a task.
+- standalone CLI tool is hard to develop in short period of time and I think it is too complex solution for such a simple task. 
+- custom android test runner is also a very complex solution.
 
-## Acceptance Criteria:
+## Implementation
 
-When invoked, your automation:
+Implemented Gradle plugin is located in [gradle/plugins/json-report](./gradle/plugins/json-report/src/main/kotlin/com/bykov/plugins/JsonReportPlugin.kt) directory.
 
--   compiles and runs the unit test suite from whichever app codebase you design it to run against.
--   collects the data from the test suite execution and transforms it into a JSON summary.
--   writes the JSON summary either to a standard output or to a file.
-    
+Everything that is located in [gradle/plugins](./gradle/plugins) folder is connected to the project using `includedBuild` method in `pluginManagement` block in [settings.gradle](settings.gradle) file.  
+As of this now we can develop plugins in such an `includedBuild` project separately from the main app.
 
-## Instructions
+The implementation itself is very straightforward.
+Using AndroidComponentsExtension it registers a new Gradle [JsonReportTask](./gradle/plugins/json-report/src/main/kotlin/com/bykov/plugins/JsonReportTask.kt) task for every variant-aware `AndroidUnitTest` Gradle task.
+Then it configure it to use `junitXml` report as an input and make `AndroidUnitTest` task be finalized by newly registered task.
 
-1.  Clone this repository.
-2.  Create a new ```dev``` branch.
-3.  Solve the task and commit your code. Commit often. We like to see small commits that build up to the end result of your test instead of one final commit with all the code.
-4.  Create a pull request from ```dev``` branch to ```main``` branch. Make sure to write about your approach in the description.
-5.  Send the link via email to our HR department so we can start reviewing your code.
-    
+The [JsonReportTask](./gradle/plugins/json-report/src/main/kotlin/com/bykov/plugins/JsonReportTask.kt) is also straightforward. 
+It gets all files from input directory, filters them by `xml` extension.  
+Then converts its XML contents to JSON using [JSON-java library](https://github.com/stleary/JSON-java) and outputs either to file or to system output.
 
-### Tips on How to Tackle the test
+The way task outputs the result can be configured using [JsonReportExtension](./gradle/plugins/json-report/src/main/kotlin/com/bykov/plugins/JsonReportExtension.kt)
 
--   We don't expect you to spend more than four hours on this test.
--   Read this page carefully and feel free to ask any questions you might have.
--   You can choose whichever tools you believe are appropriate for fulfilling the acceptance criteria stated above.
--   Try to optimize your solution in a way that makes it understandable and maintainable.
--   Create a small README that documents your solution by describing what decisions you made when designing it, how to run it, what sort of things can go wrong, and information about the data you choose to include in the output.
+## Configuration
+
+The plugin can be configured through the `jsonReport` extension, which can be added to the `build.gradle` file.
+
+```groovy
+plugins {
+    id "com.bykov.json-report"
+}
+
+jsonReport {
+    // Enable writing output to a file. Disabled by default.
+    fileOutput.enabled = true
+    // Disable writing output to system output. Enabled by default.
+    systemOutput.enabled = false
+}
+```
+
+## How to use it
+
+The best thing of this implementation is that you have to do nothing after applying and configuring Gradle plugin.
+
+Android Unit Test tasks are finalized by `JsonReportTask`.  
+This means that after executing for example `:app:testDebugUnitTest` task either you'll see json output in your console or you'll find `json-report.json` file inside `build/reports/tests/testDebugUnitTest` directory.
+
+## Points of growth
+
+This solution has cons and thus points-of-growth.
+
+1. It is not crossplatform. I mean it is applicable only for Android, not iOS.
+2. Output directory path and output file name can be made configurable.
+3. Filter fields for JSON report. We don't need all info about test suites that can be found in junit xml reports.
