@@ -1,4 +1,4 @@
-package com.hellofresh.mobile_devops_test.ui.theme
+package com.bykov.mobile_devops_test.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

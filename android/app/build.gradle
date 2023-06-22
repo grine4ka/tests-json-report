@@ -1,15 +1,24 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-    id "com.hellofresh.json-report"
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
+    id "com.bykov.json-report"
+}
+
+// Configure Java/Kotlin compilation on java/kotlin {} extension
+// https://kotl.in/gradle/jvm/toolchain
+def javaLanguageVersion = JavaLanguageVersion.of(11)
+kotlin {
+    jvmToolchain {
+        languageVersion.set(javaLanguageVersion)
+    }
 }
 
 android {
-    namespace 'com.hellofresh.mobile_devops_test'
+    namespace "com.bykov.mobile_devops_test"
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.hellofresh.mobile_devops_test"
+        applicationId "com.bykov.mobile_devops_test"
         minSdk 26
         targetSdk 33
         versionCode 1
@@ -28,11 +37,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     buildFeatures {
         compose true
@@ -49,17 +55,17 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
-    implementation 'androidx.activity:activity-compose:1.6.1'
-    implementation platform('androidx.compose:compose-bom:2022.10.00')
-    implementation 'androidx.compose.ui:ui'
-    implementation 'androidx.compose.ui:ui-graphics'
-    implementation 'androidx.compose.ui:ui-tooling-preview'
-    implementation 'androidx.compose.material3:material3'
+    implementation "androidx.core:core-ktx:1.9.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
+    implementation "androidx.activity:activity-compose:1.6.1"
+    implementation platform("androidx.compose:compose-bom:2022.10.00")
+    implementation "androidx.compose.ui:ui"
+    implementation "androidx.compose.ui:ui-graphics"
+    implementation "androidx.compose.ui:ui-tooling-preview"
+    implementation "androidx.compose.material3:material3"
 
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    testImplementation "junit:junit:4.13.2"
+    androidTestImplementation "androidx.test.ext:junit:1.1.4"
     androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
 }
 

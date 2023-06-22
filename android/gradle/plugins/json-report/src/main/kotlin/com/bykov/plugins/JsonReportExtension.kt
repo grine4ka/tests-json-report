@@ -1,4 +1,4 @@
-package com.hellofresh.plugins
+package com.bykov.plugins
 
 import org.gradle.api.Project
 import javax.inject.Inject

@@ -23,20 +23,20 @@ I stopped on implementing Gradle Plugin with task by reasons:
 
 ## Implementation
 
-Implemented Gradle plugin is located in [gradle/plugins/json-report](./gradle/plugins/json-report/src/main/kotlin/com/hellofresh/plugins/JsonReportPlugin.kt) directory.
+Implemented Gradle plugin is located in [gradle/plugins/json-report](./gradle/plugins/json-report/src/main/kotlin/com/bykov/plugins/JsonReportPlugin.kt) directory.
 
 Everything that is located in [gradle/plugins](./gradle/plugins) folder is connected to the project using `includedBuild` method in `pluginManagement` block in [settings.gradle](settings.gradle) file.  
 As of this now we can develop plugins in such an `includedBuild` project separately from the main app.
 
 The implementation itself is very straightforward.
-Using AndroidComponentsExtension it registers a new Gradle [JsonReportTask](./gradle/plugins/json-report/src/main/kotlin/com/hellofresh/plugins/JsonReportTask.kt) task for every variant-aware `AndroidUnitTest` Gradle task.
+Using AndroidComponentsExtension it registers a new Gradle [JsonReportTask](./gradle/plugins/json-report/src/main/kotlin/com/bykov/plugins/JsonReportTask.kt) task for every variant-aware `AndroidUnitTest` Gradle task.
 Then it configure it to use `junitXml` report as an input and make `AndroidUnitTest` task be finalized by newly registered task.
 
-The [JsonReportTask](./gradle/plugins/json-report/src/main/kotlin/com/hellofresh/plugins/JsonReportTask.kt) is also straightforward. 
+The [JsonReportTask](./gradle/plugins/json-report/src/main/kotlin/com/bykov/plugins/JsonReportTask.kt) is also straightforward. 
 It gets all files from input directory, filters them by `xml` extension.  
 Then converts its XML contents to JSON using [JSON-java library](https://github.com/stleary/JSON-java) and outputs either to file or to system output.
 
-The way task outputs the result can be configured using [JsonReportExtension](./gradle/plugins/json-report/src/main/kotlin/com/hellofresh/plugins/JsonReportExtension.kt)
+The way task outputs the result can be configured using [JsonReportExtension](./gradle/plugins/json-report/src/main/kotlin/com/bykov/plugins/JsonReportExtension.kt)
 
 ## Configuration
 
@@ -44,7 +44,7 @@ The plugin can be configured through the `jsonReport` extension, which can be ad
 
 ```groovy
 plugins {
-    id "com.hellofresh.json-report"
+    id "com.bykov.json-report"
 }
 
 jsonReport {

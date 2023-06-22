@@ -1,4 +1,4 @@
-package com.hellofresh.plugins
+package com.bykov.plugins
 
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.tasks.factory.AndroidUnitTest
@@ -18,7 +18,7 @@ import org.gradle.kotlin.dsl.register
  *
  * <pre>{@code
  * plugins {
- *     id "com.hellofresh.json-report"
+ *     id "com.bykov.json-report"
  * }
  *
  * jsonReport {

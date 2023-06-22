@@ -6,6 +6,7 @@ pluginManagement {
     }
     includeBuild("gradle/plugins")
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -13,5 +14,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "HalloFrisch"
-include ':app'
+
+rootProject.name = "HelloApp"
+
+include ":app"

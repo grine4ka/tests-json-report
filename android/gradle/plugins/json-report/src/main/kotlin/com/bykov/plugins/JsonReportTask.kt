@@ -1,4 +1,4 @@
-package com.hellofresh.plugins
+package com.bykov.plugins
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty

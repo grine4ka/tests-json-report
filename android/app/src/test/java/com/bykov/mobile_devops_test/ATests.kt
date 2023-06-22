@@ -1,4 +1,4 @@
-package com.hellofresh.mobile_devops_test
+package com.bykov.mobile_devops_test
 
 import org.junit.Test
 

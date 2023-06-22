@@ -1,4 +1,4 @@
-package com.hellofresh.mobile_devops_test
+package com.bykov.mobile_devops_test
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,22 +12,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.hellofresh.mobile_devops_test.ui.theme.HalloFrischTheme
+import com.bykov.mobile_devops_test.ui.theme.HelloAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            HalloFrischTheme {
+            HelloAppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = Color(red = 0.208f, green = 0.471f, blue = 0.294f)
                 ) {
-                    Greeting("Frisch")
+                    Greeting("App")
                 }
             }
         }
@@ -38,7 +37,7 @@ class MainActivity : ComponentActivity() {
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Box(contentAlignment = Alignment.Center) {
         Text(
-            text = "Hallo $name!",
+            text = "Hello $name!",
             color = Color.White,
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold,
@@ -50,7 +49,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    HalloFrischTheme {
+    HelloAppTheme {
         Greeting("Android")
     }
 }
